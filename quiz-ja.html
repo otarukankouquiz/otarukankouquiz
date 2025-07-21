@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小樽観光マナークイズ</title>
+    <!-- style.cssと接続 -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="quiz-container">
+        <h1 class="quiz-title">小樽観光マナークイズ</h1>
+        <div id="quiz-body">
+            <!-- クイズの問題はJavaScriptによってここに生成されます -->
+        </div>
+        <button id="submit-btn" class="submit-btn">結果を見る</button>
+    </div>
+
+    <!-- 結果表示用のモーダル -->
+    <div id="result-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 id="result-title"></h2>
+            <p id="result-score"></p>
+            <p id="result-message"></p>
+
+            <!-- ▼▼▼ AI機能のための追加要素 ▼▼▼ -->
+
+            <!-- 間違えた問題のAI解説セクション -->
+            <div id="ai-explanation-section" class="ai-section" style="display: none;">
+                <h3 class="ai-section-title">✨ AIに聞いてみよう</h3>
+                <p class="ai-section-description">間違えたマナーについて、AIが詳しく解説します。</p>
+                <div id="incorrect-questions-container"></div>
+            </div>
+
+            <!-- 合格者向けのAI観光プランナーセクション -->
+            <div id="ai-planner-section" class="ai-section" style="display: none;">
+                <h3 class="ai-section-title">✨ AI観光プランナー</h3>
+                <p class="ai-section-description">おめでとうございます！合格特典として、AIがあなただけの観光プランを作成します。好きなことや興味のあることをキーワードで教えてください。</p>
+                <div class="planner-input-group">
+                    <input type="text" id="planner-keywords" placeholder="例: 海鮮, ガラス, 1時間">
+                    <button id="create-plan-btn">プランを作成</button>
+                </div>
+                <div id="plan-result" class="ai-result-box"></div>
+            </div>
+            
+            <!-- ▲▲▲ AI機能のための追加要素 ▲▲▲ -->
+
+            <div id="result-link-container"></div>
+            <button id="close-btn" class="close-btn">閉じる</button>
+        </div>
+    </div>
+
+    <!-- script.jsと接続 -->
+    <script src="script-ja.js"></script>
+</body>
+</html>
