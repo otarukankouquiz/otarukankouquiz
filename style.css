@@ -5,7 +5,7 @@ body {
     color: #333;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* 上寄せに変更 */
     min-height: 100vh;
     margin: 0;
     padding: 20px;
@@ -19,6 +19,8 @@ body {
     padding: 30px 40px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .quiz-title {
@@ -63,7 +65,7 @@ body {
 }
 
 .option-label input[type="radio"] {
-    display: none; /* ラジオボタンの丸は非表示 */
+    display: none;
 }
 
 .option-label.selected {
@@ -72,9 +74,8 @@ body {
     font-weight: 700;
 }
 
-
 /* ボタンのスタイル */
-.submit-btn, .close-btn {
+.submit-btn, .retry-btn {
     display: block;
     width: 100%;
     padding: 15px;
@@ -87,139 +88,97 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    text-align: center;
+    text-decoration: none;
 }
-
-.submit-btn:hover, .close-btn:hover {
+.submit-btn:hover, .retry-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
 }
 
-/* モーダルウィンドウのスタイル */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.modal-overlay.visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-content {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
+/* ▼▼▼ 結果表示ページのスタイル ▼▼▼ */
+.result-summary {
     text-align: center;
-    width: 90%;
-    max-width: 600px; /* 少し幅を広げる */
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
-    max-height: 90vh;
-    overflow-y: auto;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #e0e0e0;
 }
 
-.modal-overlay.visible .modal-content {
-    transform: scale(1);
-}
-
-#result-title { font-size: 32px; font-weight: 700; margin-bottom: 15px; }
-#result-title.pass { color: #198754; }
-#result-title.fail { color: #dc3545; }
-#result-score { font-size: 20px; margin-bottom: 20px; color: #555; }
-#result-message { font-size: 16px; margin-bottom: 30px; }
-
-#result-link-container a {
-    display: inline-block;
-    background-color: #28a745;
-    color: white;
-    padding: 12px 25px;
-    border-radius: 8px;
-    text-decoration: none;
+.result-title {
+    font-size: 32px;
     font-weight: 700;
-    transition: background-color 0.2s;
-    margin-top: 20px; /* マージン追加 */
-}
-
-#result-link-container a:hover { background-color: #218838; }
-.close-btn { margin-top: 30px; background: linear-gradient(45deg, #6c757d, #5a6268); box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3); }
-
-/* ▼▼▼ AI機能のスタイル ▼▼▼ */
-.ai-section {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px dashed #e0e0e0;
-}
-.ai-section-title { font-size: 22px; font-weight: 700; color: #2c3e50; margin-bottom: 8px; }
-.ai-section-description { font-size: 14px; color: #555; margin-bottom: 20px; }
-
-/* AI解説 */
-.incorrect-question {
-    background-color: #fff3f3;
-    border: 1px solid #f5c6cb;
-    border-radius: 8px;
-    padding: 15px;
     margin-bottom: 15px;
-    text-align: left;
 }
-.incorrect-question p { margin: 0 0 10px 0; font-weight: 500; }
-.ai-explain-btn {
-    background-color: #17a2b8;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-.ai-explain-btn:hover { background-color: #138496; }
-.ai-explain-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+.result-title.pass { color: #198754; }
+.result-title.fail { color: #dc3545; }
 
-/* AI観光プランナー */
-.planner-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-#planner-keywords {
-    flex-grow: 1;
-    border: 2px solid #ced4da;
-    border-radius: 8px;
-    padding: 10px 15px;
+.result-score {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.result-message {
     font-size: 16px;
+    margin-bottom: 25px;
 }
-#planner-keywords:focus { border-color: #007bff; outline: none; }
-#create-plan-btn {
-    background-color: #ffc107;
-    color: #212529;
-    border: none;
-    padding: 0 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-#create-plan-btn:hover { background-color: #e0a800; }
-#create-plan-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-/* AI共通 */
-.ai-result-box {
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+.result-question-block {
+    margin-bottom: 25px;
     padding: 20px;
-    margin-top: 15px;
-    text-align: left;
-    white-space: pre-wrap; /* 改行を反映させる */
-    line-height: 1.7;
-    font-size: 15px;
+    border-radius: 10px;
+    border-left-width: 5px;
+    border-left-style: solid;
 }
-.loading-text { color: #007bff; font-weight: bold; }
-.error-text { color: #dc3545; font-weight: bold; }
+.result-question-block.correct {
+    background-color: #f0fff4;
+    border-left-color: #28a745;
+}
+.result-question-block.incorrect {
+    background-color: #fff6f6;
+    border-left-color: #dc3545;
+}
+
+.result-question-text {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.user-answer {
+    margin-bottom: 10px;
+    padding-left: 25px;
+    position: relative;
+}
+.user-answer::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.user-answer.correct::before {
+    content: '✔';
+    color: #28a745;
+}
+.user-answer.incorrect::before {
+    content: '✖';
+    color: #dc3545;
+}
+
+.explanation {
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+.explanation strong {
+    color: #0056b3;
+    display: block;
+    margin-bottom: 5px;
+}
