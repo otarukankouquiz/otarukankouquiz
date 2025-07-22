@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- 設定項目 ---
-    // ★★★ ステップ1でコピーしたウェブアプリのURLをここに貼り付けてください ★★★
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqyYxFlTHUEi1-hXXxuA_8ygEtvIY7MX3YJ_5BhF02_ck34tVVcHzX_UWreKky3S6g/exec";
+    // ★★★ ステップ1で準備したウェブアプリのURLをここに貼り付けてください ★★★
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwXHIHucbYbMlm4hbSCkYQWY1szjPHNxp__Pe2xmLCu0dqIJW4bebJaYTZwZkWDbbA5/exec";
+    
+    // ★★★ 合格者向けのインセンティブURL ★★★
+    const INCENTIVE_URL = "https://otaru.gr.jp/";
+
 
     const quizData = [
         {
@@ -37,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submit-btn');
 
     function buildQuiz() {
-        // (この関数の中身は変更ありません)
         quizData.forEach((data, index) => {
             const questionBlock = document.createElement('div');
             questionBlock.className = 'question-block';
@@ -73,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function submitResults() {
-        // 全ての質問に回答したかチェック
         for (let i = 0; i < quizData.length; i++) {
             if (!document.querySelector(`input[name="question${i}"]:checked`)) {
                 alert('すべての質問に回答してください。');
@@ -81,15 +83,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // ボタンを無効化し、メッセージを表示
         submitBtn.disabled = true;
         submitBtn.textContent = '結果を送信中...';
 
-        // スコア計算
         let score = 0;
+        const questionResults = [];
         quizData.forEach((data, index) => {
             const selectedOption = document.querySelector(`input[name="question${index}"]:checked`).value;
-            if (selectedOption === data.answer) {
+            const isCorrect = selectedOption === data.answer;
+            questionResults.push(isCorrect);
+            if (isCorrect) {
                 score++;
             }
         });
@@ -99,43 +102,49 @@ document.addEventListener('DOMContentLoaded', function() {
         const passThreshold = 80;
         const isPass = percentage >= passThreshold;
 
-        // GASに送信するデータを作成
         const postData = {
             percentage: percentage,
             score: score,
             totalQuestions: totalQuestions,
-            isPass: isPass
+            isPass: isPass,
+            results: questionResults
         };
 
-        // GASに結果を送信
         try {
             await fetch(GAS_WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors', // CORSエラーを回避
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                mode: 'no-cors',
                 body: JSON.stringify(postData),
             });
         } catch (error) {
             console.error('結果の送信に失敗しました:', error);
-            // エラーが発生してもユーザーには完了メッセージを表示する
         }
 
-        // ユーザーに完了メッセージを表示
         showCompletionMessage(isPass);
     }
 
     function showCompletionMessage(isPass) {
-        quizContainer.innerHTML = `
-            <div class="completion-message">
-                <h2 class="result-title">ご回答ありがとうございました！</h2>
+        let messageHTML = '';
+        if (isPass) {
+            messageHTML = `
+                <h2 class="result-title pass">🎉 合格です！ 🎉</h2>
                 <p class="result-message">
-                    ${isPass ? 'おめでとうございます！あなたは小樽観光マナーマスターです。' : 'ご協力ありがとうございます。'}
+                    おめでとうございます！あなたは小樽観光マナーマスターです。<br>
+                    小樽の観光情報はこちらのサイトでチェック！
                 </p>
-                ${!isPass ? '<a href="" class="retry-btn">もう一度挑戦する</a>' : ''}
-            </div>
-        `;
+                <a href="${INCENTIVE_URL}" target="_blank" class="incentive-link">小樽観光協会公式サイトへ</a>
+            `;
+        } else {
+            messageHTML = `
+                <h2 class="result-title fail">😢 不合格です 😢</h2>
+                <p class="result-message">
+                    ご協力ありがとうございます。<br>
+                    もう一度挑戦して、小樽観光の知識を深めましょう！
+                </p>
+                <a href="" class="retry-btn">もう一度挑戦する</a>
+            `;
+        }
+        quizContainer.innerHTML = `<div class="completion-message">${messageHTML}</div>`;
     }
 
     submitBtn.addEventListener('click', submitResults);
