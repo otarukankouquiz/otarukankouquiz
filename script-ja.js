@@ -1,37 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // --- 設定項目 ---
-    // ここでクイズの問題、選択肢、正解、そして解説を編集します
+    // ★★★ ステップ1でコピーしたウェブアプリのURLをここに貼り付けてください ★★★
+    const GAS_WEB_APP_URL = "ここにGASのウェブアプリURLを貼り付け";
+
     const quizData = [
         {
             question: "問1：小樽の歴史的建造物が多く残るエリアを散策する際、適切な行動はどれですか？",
             options: ["建物の壁に寄りかかって記念撮影をする", "私有地の庭に無断で入って花の写真を撮る", "建物の外観を静かに見学し、敷地内には入らない"],
-            answer: "建物の外観を静かに見学し、敷地内には入らない",
-            explanation: "歴史的建造物の多くは今も個人が所有し、生活している大切な住居です。外観を静かに楽しむだけに留め、敷地内への無断立ち入りや建物に触れる行為は控えましょう。"
+            answer: "建物の外観を静かに見学し、敷地内には入らない"
         },
         {
             question: "問2：小樽運河沿いを歩いているとき、ゴミが出たらどうするのがベストですか？",
             options: ["人が見ていなければ、こっそり植え込みに捨てる", "近くのゴミ箱を探すか、見つからなければ持ち帰る", "カモメにあげて処理してもらう"],
-            answer: "近くのゴミ箱を探すか、見つからなければ持ち帰る",
-            explanation: "美しい景観を守るため、ゴミのポイ捨ては絶対にやめましょう。また、野生動物への餌やりは生態系に影響を与える可能性があるため、控えるのがマナーです。"
+            answer: "近くのゴミ箱を探すか、見つからなければ持ち帰る"
         },
         {
             question: "問3：飲食店で海鮮丼を食べる際、避けるべきマナー違反はどれですか？",
             options: ["大声で騒ぎながら食事をする", "お店の人におすすめを聞いてみる", "食べきれない量を注文しないように気をつける"],
-            answer: "大声で騒ぎながら食事をする",
-            explanation: "他のお客様も食事を楽しんでいます。お店の雰囲気を壊さないよう、大きな声での会話は避け、静かに食事を楽しみましょう。"
+            answer: "大声で騒ぎながら食事をする"
         },
         {
             question: "問4：ガラス工房やオルゴール堂などのお店で商品を見るとき、大切なことは何ですか？",
             options: ["商品を乱暴に扱って、音を確かめる", "「撮影禁止」の表示がなければ、自由に商品を撮影してSNSにアップする", "繊細な商品が多いので、優しく丁寧に扱う"],
-            answer: "繊細な商品が多いので、優しく丁寧に扱う",
-            explanation: "ガラス製品やオルゴールは非常にデリケートです。お店の許可なく触れたり、乱暴に扱ったりすると破損の原因になります。大切な商品ですので、敬意をもって見学しましょう。"
+            answer: "繊細な商品が多いので、優しく丁寧に扱う"
         },
         {
             question: "問5：冬の小樽は道が凍結していることがあります。歩行時に最も安全な方法は？",
             options: ["かかとから着地する大股で歩く", "小さな歩幅で、足の裏全体を地面につけるように歩く", "ポケットに手を入れて、バランスを取りながら歩く"],
-            answer: "小さな歩幅で、足の裏全体を地面につけるように歩く",
-            explanation: "凍結した路面（アイスバーン）では、ペンギンのように小さな歩幅で歩く「すり足」が最も安全です。転倒防止のため、滑りにくい靴を履き、両手はいつでも使えるようにしておきましょう。"
+            answer: "小さな歩幅で、足の裏全体を地面につけるように歩く"
         }
     ];
 
@@ -39,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const quizBody = document.getElementById('quiz-body');
     const submitBtn = document.getElementById('submit-btn');
 
-    // クイズのHTMLを生成する関数
     function buildQuiz() {
+        // (この関数の中身は変更ありません)
         quizData.forEach((data, index) => {
             const questionBlock = document.createElement('div');
             questionBlock.className = 'question-block';
@@ -75,8 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 結果を表示する関数
-    function showResults() {
+    async function submitResults() {
         // 全ての質問に回答したかチェック
         for (let i = 0; i < quizData.length; i++) {
             if (!document.querySelector(`input[name="question${i}"]:checked`)) {
@@ -85,58 +81,63 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // ボタンを無効化し、メッセージを表示
+        submitBtn.disabled = true;
+        submitBtn.textContent = '結果を送信中...';
+
+        // スコア計算
         let score = 0;
-        const userAnswers = [];
         quizData.forEach((data, index) => {
             const selectedOption = document.querySelector(`input[name="question${index}"]:checked`).value;
-            userAnswers.push(selectedOption);
             if (selectedOption === data.answer) {
                 score++;
             }
         });
 
-        const percentage = Math.round((score / quizData.length) * 100);
+        const totalQuestions = quizData.length;
+        const percentage = Math.round((score / totalQuestions) * 100);
         const passThreshold = 80;
         const isPass = percentage >= passThreshold;
 
-        // クイズコンテナの中身を結果表示に差し替え
-        quizContainer.innerHTML = '';
+        // GASに送信するデータを作成
+        const postData = {
+            percentage: percentage,
+            score: score,
+            totalQuestions: totalQuestions,
+            isPass: isPass
+        };
 
-        // 結果サマリーのHTMLを生成
-        let summaryHTML = `
-            <div class="result-summary">
-                <h2 class="result-title ${isPass ? 'pass' : 'fail'}">${isPass ? '🎉 合格です！ 🎉' : '😢 不合格です 😢'}</h2>
-                <p class="result-score">あなたの正解率： ${percentage}% (${quizData.length}問中 ${score}問正解)</p>
-                <p class="result-message">${isPass ? 'おめでとうございます！あなたは小樽観光マナーマスターです。' : 'もう一度挑戦して、小樽観光の知識を深めましょう！'}</p>
-            </div>
-        `;
+        // GASに結果を送信
+        try {
+            await fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // CORSエラーを回避
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            });
+        } catch (error) {
+            console.error('結果の送信に失敗しました:', error);
+            // エラーが発生してもユーザーには完了メッセージを表示する
+        }
 
-        // 各問題の答え合わせHTMLを生成
-        let detailsHTML = quizData.map((data, index) => {
-            const userAnswer = userAnswers[index];
-            const isCorrect = userAnswer === data.answer;
-            return `
-                <div class="result-question-block ${isCorrect ? 'correct' : 'incorrect'}">
-                    <p class="result-question-text">${data.question}</p>
-                    <p class="user-answer ${isCorrect ? 'correct' : 'incorrect'}">あなたの回答: ${userAnswer}</p>
-                    <div class="explanation">
-                        <strong>💡 解説</strong>
-                        ${data.explanation}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // もう一度挑戦するボタンを追加
-        const retryButtonHTML = `<a href="" class="retry-btn">もう一度挑戦する</a>`;
-
-        quizContainer.innerHTML = summaryHTML + detailsHTML + retryButtonHTML;
+        // ユーザーに完了メッセージを表示
+        showCompletionMessage(isPass);
     }
 
-    // イベントリスナーを設定
-    submitBtn.addEventListener('click', showResults);
+    function showCompletionMessage(isPass) {
+        quizContainer.innerHTML = `
+            <div class="completion-message">
+                <h2 class="result-title">ご回答ありがとうございました！</h2>
+                <p class="result-message">
+                    ${isPass ? 'おめでとうございます！あなたは小樽観光マナーマスターです。' : 'ご協力ありがとうございます。'}
+                </p>
+                ${!isPass ? '<a href="" class="retry-btn">もう一度挑戦する</a>' : ''}
+            </div>
+        `;
+    }
 
-    // クイズを初期化
+    submitBtn.addEventListener('click', submitResults);
     buildQuiz();
 });
-
