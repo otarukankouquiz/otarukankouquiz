@@ -5,7 +5,7 @@ body {
     color: #333;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 上寄せに変更 */
+    align-items: flex-start;
     min-height: 100vh;
     margin: 0;
     padding: 20px;
@@ -95,90 +95,31 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
 }
+.submit-btn:disabled {
+    background: #a9cce3;
+    cursor: not-allowed;
+}
 
-/* ▼▼▼ 結果表示ページのスタイル ▼▼▼ */
-.result-summary {
+/* ▼▼▼ 完了メッセージのスタイル ▼▼▼ */
+.completion-message {
     text-align: center;
-    margin-bottom: 40px;
-    padding-bottom: 30px;
-    border-bottom: 2px solid #e0e0e0;
+    padding: 40px 0;
 }
 
 .result-title {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
     margin-bottom: 15px;
-}
-.result-title.pass { color: #198754; }
-.result-title.fail { color: #dc3545; }
-
-.result-score {
-    font-size: 20px;
-    margin-bottom: 20px;
-    color: #555;
+    color: #2c3e50;
 }
 
 .result-message {
     font-size: 16px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+    color: #555;
+    line-height: 1.7;
 }
 
-.result-question-block {
-    margin-bottom: 25px;
-    padding: 20px;
-    border-radius: 10px;
-    border-left-width: 5px;
-    border-left-style: solid;
-}
-.result-question-block.correct {
-    background-color: #f0fff4;
-    border-left-color: #28a745;
-}
-.result-question-block.incorrect {
-    background-color: #fff6f6;
-    border-left-color: #dc3545;
-}
-
-.result-question-text {
-    font-weight: 700;
-    margin-bottom: 15px;
-}
-
-.user-answer {
-    margin-bottom: 10px;
-    padding-left: 25px;
-    position: relative;
-}
-.user-answer::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-.user-answer.correct::before {
-    content: '✔';
-    color: #28a745;
-}
-.user-answer.incorrect::before {
-    content: '✖';
-    color: #dc3545;
-}
-
-.explanation {
-    background-color: #e9ecef;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-    font-size: 15px;
-    line-height: 1.6;
-}
-.explanation strong {
-    color: #0056b3;
-    display: block;
-    margin-bottom: 5px;
+.retry-btn {
+    margin-top: 10px;
 }
