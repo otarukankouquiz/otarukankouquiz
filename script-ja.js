@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 設定項目 ---
     // ★★★ ステップ1でコピーしたウェブアプリのURLをここに貼り付けてください ★★★
-    const GAS_WEB_APP_URL = "ここにGASのウェブアプリURLを貼り付け";
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqyYxFlTHUEi1-hXXxuA_8ygEtvIY7MX3YJ_5BhF02_ck34tVVcHzX_UWreKky3S6g/exec";
 
     const quizData = [
         {
