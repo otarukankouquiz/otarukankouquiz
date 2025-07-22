@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 設定項目 ---
     // ★★★ ステップ1で準備したウェブアプリのURLをここに貼り付けてください ★★★
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwXHIHucbYbMlm4hbSCkYQWY1szjPHNxp__Pe2xmLCu0dqIJW4bebJaYTZwZkWDbbA5/exec";
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvLmuiLGx5e0QP6ozrzmRPWnLCmYfnTUNX4s2iGKL2mv-jdfnqQw8UKzpdduY-0-fN/exec";
     
     // ★★★ 合格者向けのインセンティブURL ★★★
     const INCENTIVE_URL = "https://otaru.gr.jp/";
