@@ -69,6 +69,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submit-btn');
 
     function buildQuiz() {
+        // quizBodyがnullの場合、処理を中断してエラーを防ぐ
+        if (!quizBody) {
+            console.error("エラー: HTML内に 'quiz-body' のIDを持つ要素が見つかりません。");
+            return;
+        }
+        
         quizData.forEach((data, index) => {
             const questionBlock = document.createElement('div');
             questionBlock.className = 'question-block';
@@ -168,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         } else {
             messageHTML = `
-                <h2 class="result-title fail">� 不合格です 😢</h2>
+                <h2 class="result-title fail">😢 不合格です 😢</h2>
                 <p class="result-message">
                     ご協力ありがとうございます。<br>
                     もう一度挑戦して、小樽観光の知識を深めましょう！
@@ -182,4 +188,3 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.addEventListener('click', submitResults);
     buildQuiz();
 });
-�
