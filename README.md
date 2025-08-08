@@ -1,16 +1,38 @@
-## Hi there 👋
+小樽観光マナークイズ - 結果自動記録システム
+このプロジェクトは、回答結果をGoogleスプレッドシートに自動記録する機能を持つ、ウェブサイト埋め込み用の観光マナークイズです。
 
-<!--
-**otarukankouquiz/otarukankouquiz** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+ファイル構成と役割
+このクイズシステムは、以下のファイルで構成されています。
 
-Here are some ideas to get you started:
+index.html
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+役割: 言語選択ページ。ユーザーが最初にアクセスし、クイズの言語を選びます。
+
+quiz-ja.html
+
+役割: 日本語クイズの本体ページ。問題と選択肢が表示されます。
+
+style.css
+
+役割: デザイン定義ファイル。クイズ全体の見た目を整えます。
+
+script-ja.js
+
+役割: クイズの動作を制御するファイル。問題の表示、回答のチェック、結果の送信など、クイズの心臓部です。
+
+Google Apps Script (GAS)
+
+役割: 回答データを記録するバックエンド。クイズの結果を受け取り、指定したGoogleスプレッドシートに自動で書き込みます。
+
+簡単な設定の流れ
+バックエンドの設定:
+
+Googleスプレッドシートと連携するGoogle Apps Scriptを準備し、ウェブアプリとしてデプロイしてURLを取得します。
+
+フロントエンドの設定:
+
+script-ja.jsファイルを開き、取得したGASのURLと、合格者に表示したいインセンティブURLを貼り付けます。
+
+公開:
+
+HTML, CSS, JSファイルをサーバーにアップロードし、公開されたindex.htmlのURLをGoogleサイトなどに埋め込んで利用します。
