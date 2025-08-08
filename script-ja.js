@@ -4,10 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // ★★★ Google Apps ScriptのウェブアプリURLをここに貼り付けてください ★★★
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvLmuiLGx5e0QP6ozrzmRPWnLCmYfnTUNX4s2iGKL2mv-jdfnqQw8UKzpdduY-0-fN/exec";
     
-    // ★★★ 合格者向けのインセンティブURL ★★★
-    const INCENTIVE_URL = "https://otaru.gr.jp/";
-
-
     // --- 新しいクイズの内容 (全6問) ---
     const quizData = [
         {
@@ -162,13 +158,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2 class="result-title pass">🎉 合格です！ 🎉</h2>
                 <p class="result-message">
                     おめでとうございます！あなたは小樽観光マナーマスターです。<br>
-                    小樽の観光情報はこちらのサイトでチェック！
+                    小樽の観光に役立つサイトはこちらからどうぞ！
                 </p>
-                <a href="${INCENTIVE_URL}" target="_blank" class="incentive-link">小樽観光協会公式サイトへ</a>
+                <div class="incentive-container">
+                    <a href="https://otaru.gr.jp/project/otaru-tourist-brochure" target="_blank" class="incentive-link">観光ガイドマップ・パンフレット</a>
+                    <a href="https://tsumugu-otaru.jp/" target="_blank" class="incentive-link">オンライン観光ガイド「つむぐおたる」</a>
+                    <a href="https://otaru.gr.jp/" target="_blank" class="incentive-link">小樽観光協会</a>
+                </div>
             `;
         } else {
             messageHTML = `
-                <h2 class="result-title fail">😢 不合格です 😢</h2>
+                <h2 class="result-title fail">� 不合格です 😢</h2>
                 <p class="result-message">
                     ご協力ありがとうございます。<br>
                     もう一度挑戦して、小樽観光の知識を深めましょう！
@@ -182,3 +182,4 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.addEventListener('click', submitResults);
     buildQuiz();
 });
+�
