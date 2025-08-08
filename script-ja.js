@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="incentive-container">
                     <a href="https://otaru.gr.jp/project/otaru-tourist-brochure" target="_blank" class="incentive-link">観光ガイドマップ・パンフレット</a>
                     <a href="https://tsumugu-otaru.jp/" target="_blank" class="incentive-link">オンライン観光ガイド「つむぐおたる」</a>
-                    <a href="https://otaru.gr.jp/" target="_blank" class="incentive-link">小樽観光協会</a>
+                    <a href="https://otaru.gr.jp/" target="_blank" class="incentive-link">小樽観光協会ホームページ</a>
                 </div>
             `;
         } else {
