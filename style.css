@@ -100,7 +100,7 @@ body {
     cursor: not-allowed;
 }
 
-/* ▼▼▼ 完了メッセージのスタイル ▼▼▼ */
+/* 完了メッセージのスタイル */
 .completion-message {
     text-align: center;
     padding: 40px 0;
@@ -110,8 +110,9 @@ body {
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 15px;
-    color: #2c3e50;
 }
+.result-title.pass { color: #198754; }
+.result-title.fail { color: #dc3545; }
 
 .result-message {
     font-size: 16px;
@@ -122,4 +123,30 @@ body {
 
 .retry-btn {
     margin-top: 10px;
+}
+
+/* インセンティブリンクのスタイル */
+.incentive-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.incentive-link {
+    display: block;
+    background: linear-gradient(45deg, #28a745, #218838);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    transition: all 0.3s ease;
+}
+
+.incentive-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
