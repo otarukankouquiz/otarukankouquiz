@@ -63,9 +63,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function startTimer() {
         let timeLeft = COUNTDOWN_SECONDS;
         timerBar.style.width = '100%';
-        timerBar.style.transition = `width ${COUNTDOWN_SECONDS}s linear`;
-        timerBar.style.width = '0%';
-
+        // requestAnimationFrameを挟むことで、CSS transitionが確実に適用される
+        requestAnimationFrame(() => {
+            timerBar.style.transition = `width ${COUNTDOWN_SECONDS}s linear`;
+            timerBar.style.width = '0%';
+        });
+        
         timerInterval = setInterval(() => {
             timeLeft--;
             if (timeLeft < 0) {
@@ -125,7 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             await fetch(GAS_WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'no-cors', // 'no-cors'モードではレスポンス内容を取得できないが、リクエストは送信される
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8', // GAS側で正しく処理するために変更
+                },
                 body: JSON.stringify({
                     percentage, score, totalQuestions, isPass,
                     results: questionResults
