@@ -4,22 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小樽観光マナークイズ</title>
-    <!-- style.cssと接続 -->
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <div class="quiz-container" id="quiz-container">
-        <div id="quiz-header">
-             <h1 class="quiz-title">小樽観光マナークイズ</h1>
+        
+        <!-- クイズ開始前の画面 -->
+        <div id="start-screen">
+            <h1 class="quiz-title">小樽観光マナークイズ</h1>
+            <p class="quiz-description">
+                全7問のマナークイズに挑戦しよう！<br>
+                各問題の制限時間は6秒です。
+            </p>
+            <button id="start-btn" class="start-btn">クイズ開始</button>
         </div>
-        <div id="quiz-body">
-            <!-- クイズの問題はJavaScriptによってここに生成されます -->
+
+        <!-- クイズ中の画面 (JavaScriptで内容が生成される) -->
+        <div id="quiz-screen" class="hidden">
+            <div id="timer-bar-container">
+                <div id="timer-bar"></div>
+            </div>
+            <div id="question-header">
+                <p id="question-counter"></p>
+                <p id="question-text"></p>
+            </div>
+            <div id="options-container">
+                <!-- 選択肢はここに生成されます -->
+            </div>
         </div>
-        <button id="submit-btn" class="submit-btn">結果を見る</button>
+
     </div>
 
-    <!-- script.jsと接続 -->
     <script src="script-ja.js"></script>
 </body>
 </html>
