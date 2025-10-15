@@ -3,23 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小樽観光マナークイズ</title>
-    <link rel="stylesheet" href="style.css">
+    <title>小樽観光マナークイズ - 言語選択</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .portal-container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8rem;
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 2.5rem;
+        }
+        .lang-button {
+            display: block;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .lang-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-    <div class="quiz-container" id="quiz-container">
-        <div id="quiz-header">
-             <h1 class="quiz-title">小樽観光マナークイズ</h1>
+    <div class="portal-container">
+        <h1>小樽観光マナークイズへようこそ！</h1>
+        <p>Welcome to the Otaru Tourism Etiquette Quiz!</p>
+        <div>
+            <a href="quiz-ja.html" class="lang-button">日本語 (Japanese)</a>
+            <!-- 他言語版を作成した場合はここに追加 -->
+            <!-- <a href="quiz-en.html" class="lang-button">English</a> -->
         </div>
-        
-        <!-- JavaScriptがクイズの問題をここに書き込みます -->
-        <div id="quiz-body"></div>
-        
-        <button id="submit-btn" class="submit-btn">結果を見る</button>
     </div>
-
-    <!-- JavaScriptファイルを最後に読み込みます -->
-    <script src="script-ja.js"></script>
 </body>
 </html>
