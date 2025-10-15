@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 設定項目 ---
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvLmuiLGx5e0QP6ozrzmRPWnLCmYfnTUNX4s2iGKL2mv-jdfnqQw8UKzpdduY-0-fN/exec";
-    const COUNTDOWN_SECONDS = 6; // 各問題の制限時間（秒）
+    const COUNTDOWN_SECONDS = 10; // 各問題の制限時間を10秒に変更
 
     const quizData = [
         { question: "問1：歴史を感じる素敵な個人のお家を発見！写真を撮りたいとき、最も適切な行動はどれですか？", options: ["門から少しだけ中に入り、良いアングルで撮影する", "敷地には絶対に入らず、公道から静かに撮影する", "庭の木の枝を少しよけて、建物全体を撮影する"], answer: "敷地には絶対に入らず、公道から静かに撮影する" },
@@ -63,7 +63,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function startTimer() {
         let timeLeft = COUNTDOWN_SECONDS;
         timerBar.style.width = '100%';
-        // requestAnimationFrameを挟むことで、CSS transitionが確実に適用される
+        
+        // ★★★ 修正点 ★★★
+        // requestAnimationFrameを挟むことで、ブラウザの描画が更新されてから
+        // transitionを開始させ、第一問目からアニメーションが確実に動作するようにします。
         requestAnimationFrame(() => {
             timerBar.style.transition = `width ${COUNTDOWN_SECONDS}s linear`;
             timerBar.style.width = '0%';
@@ -80,15 +83,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function resetTimer() {
         clearInterval(timerInterval);
-        timerBar.style.transition = 'none';
+        timerBar.style.transition = 'none'; // transitionを一旦リセット
         timerBar.style.width = '100%';
     }
 
     function selectAnswer(selectedButton, selectedOption) {
         resetTimer();
         userAnswers[currentQuestionIndex] = selectedOption;
-
-        const isCorrect = selectedOption === quizData[currentQuestionIndex].answer;
         
         Array.from(optionsContainer.children).forEach(btn => {
             btn.disabled = true;
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 finishQuiz();
             }
-        }, 1200); // 1.2秒待ってから次の問題へ
+        }, 1200);
     }
 
     async function finishQuiz() {
@@ -128,10 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             await fetch(GAS_WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors', // 'no-cors'モードではレスポンス内容を取得できないが、リクエストは送信される
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8', // GAS側で正しく処理するために変更
-                },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({
                     percentage, score, totalQuestions, isPass,
                     results: questionResults
