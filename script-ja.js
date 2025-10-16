@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 設定項目 ---
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvLmuiLGx5e0QP6ozrzmRPWnLCmYfnTUNX4s2iGKL2mv-jdfnqQw8UKzpdduY-0-fN/exec";
-    const COUNTDOWN_SECONDS = 10; // 各問題の制限時間を10秒に変更
+    const COUNTDOWN_SECONDS = 10;
 
     const quizData = [
         { question: "問1：歴史を感じる素敵な個人のお家を発見！写真を撮りたいとき、最も適切な行動はどれですか？", options: ["門から少しだけ中に入り、良いアングルで撮影する", "敷地には絶対に入らず、公道から静かに撮影する", "庭の木の枝を少しよけて、建物全体を撮影する"], answer: "敷地には絶対に入らず、公道から静かに撮影する" },
@@ -23,17 +23,77 @@ document.addEventListener('DOMContentLoaded', function() {
     const questionCounterEl = document.getElementById('question-counter');
     const questionTextEl = document.getElementById('question-text');
     const optionsContainer = document.getElementById('options-container');
+    const soundControl = document.getElementById('sound-control');
+    const iconSoundOn = document.getElementById('icon-sound-on');
+    const iconSoundOff = document.getElementById('icon-sound-off');
 
     // --- 変数定義 ---
     let currentQuestionIndex = 0;
     let userAnswers = [];
     let timerInterval;
+    let isMuted = false;
+    let isSoundInitialized = false;
+
+    // --- サウンド定義 (Tone.js) ---
+    const synth = new Tone.Synth().toDestination();
+    const bgm = new Tone.Sequence((time, note) => {
+        synth.triggerAttackRelease(note, "8n", time);
+    }, ["C4", "E4", "G4", "C5", "E4", "G4", "A4", "G4"], "4n").start(0);
+    Tone.Transport.bpm.value = 100;
+
+    function playClickSound() {
+        if (!isMuted) synth.triggerAttackRelease("C5", "16n");
+    }
+    function playCorrectSound() {
+        if (!isMuted) {
+            synth.triggerAttackRelease("C5", "16n", Tone.now());
+            synth.triggerAttackRelease("G5", "16n", Tone.now() + 0.1);
+        }
+    }
+    function playIncorrectSound() {
+        if (!isMuted) synth.triggerAttackRelease("A3", "8n");
+    }
+    function playPassSound() {
+        if (!isMuted) {
+             const passMelody = ["C5", "E5", "G5", "C6"];
+             let delay = 0;
+             passMelody.forEach(note => {
+                synth.triggerAttackRelease(note, "16n", Tone.now() + delay);
+                delay += 0.15;
+             });
+        }
+    }
+    function playFailSound() {
+        if (!isMuted) {
+             synth.triggerAttackRelease("G3", "8n", Tone.now());
+             synth.triggerAttackRelease("C3", "8n", Tone.now() + 0.2);
+        }
+    }
 
     // --- イベントリスナー ---
     startBtn.addEventListener('click', startQuiz);
+    soundControl.addEventListener('click', toggleMute);
 
     // --- 関数定義 ---
-    function startQuiz() {
+    async function initializeAudio() {
+        if (!isSoundInitialized) {
+            await Tone.start();
+            isSoundInitialized = true;
+        }
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        Tone.Master.mute = isMuted;
+        iconSoundOn.style.display = isMuted ? 'none' : 'block';
+        iconSoundOff.style.display = isMuted ? 'block' : 'none';
+    }
+
+    async function startQuiz() {
+        await initializeAudio();
+        playClickSound();
+        if (!isMuted) Tone.Transport.start();
+        
         startScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         showQuestion();
@@ -42,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function showQuestion() {
         resetTimer();
         const currentQuestion = quizData[currentQuestionIndex];
-        
         questionCounterEl.textContent = `第 ${currentQuestionIndex + 1} 問 / ${quizData.length} 問`;
         questionTextEl.textContent = currentQuestion.question;
         
@@ -56,17 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
             button.addEventListener('click', () => selectAnswer(button, option));
             optionsContainer.appendChild(button);
         });
-
         startTimer();
     }
 
     function startTimer() {
         let timeLeft = COUNTDOWN_SECONDS;
         timerBar.style.width = '100%';
-        
-        // ★★★ 修正点 ★★★
-        // requestAnimationFrameを挟むことで、ブラウザの描画が更新されてから
-        // transitionを開始させ、第一問目からアニメーションが確実に動作するようにします。
         requestAnimationFrame(() => {
             timerBar.style.transition = `width ${COUNTDOWN_SECONDS}s linear`;
             timerBar.style.width = '0%';
@@ -76,20 +130,27 @@ document.addEventListener('DOMContentLoaded', function() {
             timeLeft--;
             if (timeLeft < 0) {
                 clearInterval(timerInterval);
-                selectAnswer(null, null); // 時間切れ
+                selectAnswer(null, null);
             }
         }, 1000);
     }
 
     function resetTimer() {
         clearInterval(timerInterval);
-        timerBar.style.transition = 'none'; // transitionを一旦リセット
+        timerBar.style.transition = 'none';
         timerBar.style.width = '100%';
     }
 
     function selectAnswer(selectedButton, selectedOption) {
         resetTimer();
         userAnswers[currentQuestionIndex] = selectedOption;
+        
+        const isCorrect = selectedOption === quizData[currentQuestionIndex].answer;
+        if (isCorrect) {
+            playCorrectSound();
+        } else {
+            playIncorrectSound();
+        }
         
         Array.from(optionsContainer.children).forEach(btn => {
             btn.disabled = true;
@@ -111,6 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function finishQuiz() {
+        Tone.Transport.stop();
         quizScreen.innerHTML = `<h2 class="result-title">結果を送信中...</h2><p class="result-message">しばらくお待ちください</p>`;
         
         let score = 0;
@@ -125,6 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const percentage = Math.round((score / totalQuestions) * 100);
         const passThreshold = 80;
         const isPass = percentage >= passThreshold;
+        
+        if (isPass) playPassSound();
+        else playFailSound();
 
         try {
             await fetch(GAS_WEB_APP_URL, {
@@ -171,5 +236,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
         }
         quizContainer.innerHTML = messageHTML;
+        
+        // 結果表示画面のボタンにもクリック音を設定
+        const finalButtons = quizContainer.querySelectorAll('.incentive-link, .retry-btn');
+        finalButtons.forEach(btn => {
+            btn.addEventListener('click', playClickSound);
+        });
     }
 });
