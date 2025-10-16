@@ -32,6 +32,24 @@ body {
     text-align: center;
     overflow: hidden;
     box-sizing: border-box;
+    position: relative; /* サウンドボタンの配置基準 */
+}
+
+/* サウンドボタンのスタイル */
+.sound-control {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+}
+.sound-control:hover {
+    color: var(--primary-color);
+}
+.sound-control svg {
+    width: 24px;
+    height: 24px;
 }
 
 /* クイズ開始画面 */
@@ -82,7 +100,7 @@ body {
     width: 100%;
     background-color: var(--primary-color);
     border-radius: 5px;
-    transition: width 0.1s linear; /* タイマーの滑らかな動き */
+    transition: width 0.1s linear;
 }
 
 #question-header {
@@ -98,7 +116,7 @@ body {
 #question-text {
     font-size: 1.4rem;
     font-weight: 700;
-    min-height: 80px; /* 問題文の高さ変化によるレイアウト崩れを防ぐ */
+    min-height: 80px;
 }
 
 #options-container {
@@ -124,7 +142,6 @@ body {
     transform: translateX(5px);
 }
 
-/* 選択肢のフィードバック */
 .option-btn.correct {
     background-color: var(--correct-color);
     color: white;
