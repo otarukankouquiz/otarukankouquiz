@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- DOM要素の取得 ---
     const quizContainer = document.getElementById('quiz-container');
+    // ... (他のDOM要素取得は変更なし) ...
     const startScreen = document.getElementById('start-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const startBtn = document.getElementById('start-btn');
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 変数定義 ---
     let currentQuestionIndex = 0;
+    // ... (他の変数は変更なし) ...
     let userAnswers = [];
     let timerInterval;
     let isMuted = false;
@@ -44,15 +46,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function playClickSound() {
         if (!isMuted) synth.triggerAttackRelease("C5", "16n");
     }
+
+    // ★★★ 修正点 ★★★
+    // 正解音を、より明るくはっきりとした上昇音に変更
     function playCorrectSound() {
         if (!isMuted) {
-            synth.triggerAttackRelease("C5", "16n", Tone.now());
-            synth.triggerAttackRelease("G5", "16n", Tone.now() + 0.1);
+            synth.triggerAttackRelease("E5", "12n", Tone.now());
+            synth.triggerAttackRelease("A5", "12n", Tone.now() + 0.1);
         }
     }
+    
+    // ★★★ 修正点 ★★★
+    // 不正解音を、より低くはっきりとした下降音に変更
     function playIncorrectSound() {
-        if (!isMuted) synth.triggerAttackRelease("A3", "8n");
+        if (!isMuted) {
+            synth.triggerAttackRelease("E3", "8n", Tone.now());
+            synth.triggerAttackRelease("C3", "8n", Tone.now() + 0.15);
+        }
     }
+
     function playPassSound() {
         if (!isMuted) {
              const passMelody = ["C5", "E5", "G5", "C6"];
@@ -69,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
              synth.triggerAttackRelease("C3", "8n", Tone.now() + 0.2);
         }
     }
+    // ... (以降のイベントリスナーや関数は変更なし) ...
 
     // --- イベントリスナー ---
     startBtn.addEventListener('click', startQuiz);
@@ -213,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isPass) {
             messageHTML = `
                 <div class="completion-message">
-                    <h2 class="result-title pass">🎉 合格です！ 🎉</h2>
+                    <h2 class="result-title pass">� 合格です！ 🎉</h2>
                     <p class="result-message">
                         おめでとうございます！あなたは小樽観光マナーマスターです。<br>
                         小樽の観光に役立つサイトはこちらからどうぞ！
@@ -237,10 +250,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         quizContainer.innerHTML = messageHTML;
         
-        // 結果表示画面のボタンにもクリック音を設定
         const finalButtons = quizContainer.querySelectorAll('.incentive-link, .retry-btn');
         finalButtons.forEach(btn => {
             btn.addEventListener('click', playClickSound);
         });
     }
 });
+�
