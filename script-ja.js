@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- DOM要素の取得 ---
     const quizContainer = document.getElementById('quiz-container');
-    // ... (他のDOM要素取得は変更なし) ...
     const startScreen = document.getElementById('start-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const startBtn = document.getElementById('start-btn');
@@ -30,58 +29,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 変数定義 ---
     let currentQuestionIndex = 0;
-    // ... (他の変数は変更なし) ...
     let userAnswers = [];
     let timerInterval;
     let isMuted = false;
     let isSoundInitialized = false;
 
-    // --- サウンド定義 (Tone.js) ---
-    const synth = new Tone.Synth().toDestination();
-    const bgm = new Tone.Sequence((time, note) => {
-        synth.triggerAttackRelease(note, "8n", time);
-    }, ["C4", "E4", "G4", "C5", "E4", "G4", "A4", "G4"], "4n").start(0);
-    Tone.Transport.bpm.value = 100;
+    // --- サウンドオブジェクトの変数を先に定義 ---
+    let seSynth, bgmSynth, bgm;
 
+    // --- 効果音の関数定義 ---
     function playClickSound() {
-        if (!isMuted) synth.triggerAttackRelease("C5", "16n");
+        if (!isMuted && seSynth) seSynth.triggerAttackRelease("C5", "16n");
     }
-
-    // ★★★ 修正点 ★★★
-    // 正解音を、より明るくはっきりとした上昇音に変更
     function playCorrectSound() {
-        if (!isMuted) {
-            synth.triggerAttackRelease("E5", "12n", Tone.now());
-            synth.triggerAttackRelease("A5", "12n", Tone.now() + 0.1);
+        if (!isMuted && seSynth) {
+            seSynth.triggerAttackRelease("E5", "12n", Tone.now());
+            seSynth.triggerAttackRelease("A5", "12n", Tone.now() + 0.1);
         }
     }
-    
-    // ★★★ 修正点 ★★★
-    // 不正解音を、より低くはっきりとした下降音に変更
     function playIncorrectSound() {
-        if (!isMuted) {
-            synth.triggerAttackRelease("E3", "8n", Tone.now());
-            synth.triggerAttackRelease("C3", "8n", Tone.now() + 0.15);
+        if (!isMuted && seSynth) {
+            seSynth.triggerAttackRelease("E3", "8n", Tone.now());
+            seSynth.triggerAttackRelease("C3", "8n", Tone.now() + 0.15);
         }
     }
-
     function playPassSound() {
-        if (!isMuted) {
+        if (!isMuted && seSynth) {
              const passMelody = ["C5", "E5", "G5", "C6"];
              let delay = 0;
              passMelody.forEach(note => {
-                synth.triggerAttackRelease(note, "16n", Tone.now() + delay);
+                seSynth.triggerAttackRelease(note, "16n", Tone.now() + delay);
                 delay += 0.15;
              });
         }
     }
     function playFailSound() {
-        if (!isMuted) {
-             synth.triggerAttackRelease("G3", "8n", Tone.now());
-             synth.triggerAttackRelease("C3", "8n", Tone.now() + 0.2);
+        if (!isMuted && seSynth) {
+             seSynth.triggerAttackRelease("G3", "8n", Tone.now());
+             seSynth.triggerAttackRelease("C3", "8n", Tone.now() + 0.2);
         }
     }
-    // ... (以降のイベントリスナーや関数は変更なし) ...
 
     // --- イベントリスナー ---
     startBtn.addEventListener('click', startQuiz);
@@ -89,24 +76,72 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 関数定義 ---
     async function initializeAudio() {
-        if (!isSoundInitialized) {
+        if (isSoundInitialized) return; // 既に初期化済みなら何もしない
+
+        try {
             await Tone.start();
+            // Tone.start()が成功した後に、サウンドオブジェクトを初期化
+            seSynth = new Tone.Synth().toDestination();
+            bgmSynth = new Tone.Synth({ volume: -12 }).toDestination();
+
+            bgm = new Tone.Sequence((time, note) => {
+                if (bgmSynth) bgmSynth.triggerAttackRelease(note, "8n", time);
+            }, ["C4", "E4", "G4", "C5", "E4", "G4", "A4", "G4"], "4n").start(0);
+            
+            Tone.Transport.bpm.value = 100;
             isSoundInitialized = true;
+            console.log("サウンドの初期化に成功しました。");
+
+        } catch (e) {
+            console.error("サウンドの初期化に失敗しました: ", e);
+            // サウンドなしで続行するために、isMutedを強制的にtrueにする
+            isMuted = true;
+            isSoundInitialized = true; // エラーでも再度初期化を試みないようにする
+            // サウンドボタンも非表示にする
+            soundControl.style.display = 'none';
+        }
+    }
+    
+    function toggleMute() {
+        // サウンド初期化失敗時はミュート解除を許可しない
+        if (!isSoundInitialized && isMuted) return;
+
+        isMuted = !isMuted;
+        
+        if (isSoundInitialized && Tone.Master) {
+             Tone.Master.mute = isMuted;
+        }
+
+        iconSoundOn.style.display = isMuted ? 'none' : 'block';
+        iconSoundOff.style.display = isMuted ? 'block' : 'none';
+
+        // BGMの再生/停止も制御する
+        if (isSoundInitialized && Tone.Transport) {
+            if (isMuted) {
+                Tone.Transport.pause(); // ミュート時はBGMを一時停止
+            } else {
+                // クイズ画面が表示されている場合のみBGMを再開
+                if (!quizScreen.classList.contains('hidden')) {
+                     Tone.Transport.start();
+                }
+            }
         }
     }
 
-    function toggleMute() {
-        isMuted = !isMuted;
-        Tone.Master.mute = isMuted;
-        iconSoundOn.style.display = isMuted ? 'none' : 'block';
-        iconSoundOff.style.display = isMuted ? 'block' : 'none';
-    }
-
     async function startQuiz() {
-        await initializeAudio();
-        playClickSound();
-        if (!isMuted) Tone.Transport.start();
+        // ★★★ 修正点 ★★★
+        // 最初にオーディオを有効化
+        await initializeAudio(); 
         
+        // initializeAudioが成功していればクリック音を再生
+        playClickSound(); 
+        
+        // BGM再生開始 (initializeAudioが成功し、ミュートでない場合)
+        if (!isMuted && isSoundInitialized && Tone.Transport) {
+             Tone.Transport.start();
+        }
+        
+        // 画面切り替えはサウンド初期化の後に行う
         startScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         showQuestion();
@@ -185,7 +220,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function finishQuiz() {
-        Tone.Transport.stop();
+        // BGM停止 (isSoundInitializedがtrueの場合のみ)
+        if (isSoundInitialized && Tone.Transport) {
+            Tone.Transport.stop(); 
+        }
+
         quizScreen.innerHTML = `<h2 class="result-title">結果を送信中...</h2><p class="result-message">しばらくお待ちください</p>`;
         
         let score = 0;
@@ -226,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isPass) {
             messageHTML = `
                 <div class="completion-message">
-                    <h2 class="result-title pass">� 合格です！ 🎉</h2>
+                    <h2 class="result-title pass">🎉 合格です！ 🎉</h2>
                     <p class="result-message">
                         おめでとうございます！あなたは小樽観光マナーマスターです。<br>
                         小樽の観光に役立つサイトはこちらからどうぞ！
@@ -244,16 +283,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="result-message">
                         ご協力ありがとうございます。<br>
                         もう一度挑戦して、小樽観光の知識を深めましょう！
-                    </p>
+                    </G>
                     <a href="" class="retry-btn">もう一度挑戦する</a>
                 </div>`;
         }
         quizContainer.innerHTML = messageHTML;
         
+        // 結果画面のボタンにもクリック音を設定
         const finalButtons = quizContainer.querySelectorAll('.incentive-link, .retry-btn');
         finalButtons.forEach(btn => {
             btn.addEventListener('click', playClickSound);
         });
     }
 });
-�
