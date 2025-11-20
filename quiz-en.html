@@ -1,0 +1,180 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvLmuiLGx5e0QP6ozrzmRPWnLCmYfnTUNX4s2iGKL2mv-jdfnqQw8UKzpdduY-0-fN/exec";
+    const COUNTDOWN_SECONDS = 10;
+
+    // English Questions
+    const quizData = [
+        { question: "Q1: You found a beautiful private house! What is the appropriate way to take a photo?", options: ["Enter the gate slightly for a better angle", "Never enter the property; take photos from the public road", "Move tree branches aside to see the building"], answer: "Never enter the property; take photos from the public road" },
+        { question: "Q2: You see scenic railroad tracks. How should you take a photo?", options: ["Quickly stand on the tracks while no train is coming", "Do not enter the tracks; it is dangerous and prohibited", "Stand right next to the tracks for a dynamic shot"], answer: "Do not enter the tracks; it is dangerous and prohibited" },
+        { question: "Q3: Walking on a scenic road with no sidewalk. What is the safest way?", options: ["Walk side-by-side chatting, as the road is wide", "Walk in a single file on the edge, watching for cars", "Move aside only when a car comes from behind"], answer: "Walk in a single file on the edge, watching for cars" },
+        { question: "Q4: You have an empty bottle but can't find a trash can. What should you do?", options: ["Hide it in the bushes since no one is watching", "Take it back to your hotel to dispose of it", "Throw it in a shop's bin without asking"], answer: "Take it back to your hotel to dispose of it" },
+        { question: "Q5: You bought takeout food at the market and want to eat at a nearby cafe. What is correct?", options: ["Start eating it without saying anything", "Order a drink and eat your food", "Ask the staff first: 'Can I eat this here?'"], answer: "Ask the staff first: 'Can I eat this here?'" },
+        { question: "Q6: You want to park near your destination, but there is a 'No Parking' sign.", options: ["Park there if it's just for a short time", "Find a paid parking lot, even if you have to walk a bit", "Wait in the car with hazard lights on"], answer: "Find a paid parking lot, even if you have to walk a bit" },
+        { question: "Q7: How should you converse with friends on a bus or train?", options: ["Speak loudly across the aisle", "Share funny stories loudly for others to hear", "Speak quietly to the person next to you"], answer: "Speak quietly to the person next to you" }
+    ];
+
+    // ... (Sound logic and variables remain largely the same, omitted for brevity but assume full copy from script-ja.js with text changes below) ...
+    // For brevity, I'm copying the structure but changing only the text-dependent parts. 
+    // In a real implementation, you'd copy the FULL content of script-ja.js and replace quizData and showCompletionMessage.
+
+    // --- Minimal setup for the example (You should copy the FULL script-ja.js logic here and replace text) ---
+    // START OF COPIED LOGIC
+    const quizContainer = document.getElementById('quiz-container');
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const startBtn = document.getElementById('start-btn');
+    const timerBar = document.getElementById('timer-bar');
+    const questionCounterEl = document.getElementById('question-counter');
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const soundControl = document.getElementById('sound-control');
+    const iconSoundOn = document.getElementById('icon-sound-on');
+    const iconSoundOff = document.getElementById('icon-sound-off');
+
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let timerInterval;
+    let isMuted = false;
+    let isSoundInitialized = false;
+    let seSynth, bgmSynth, bgm;
+
+    function playClickSound() { if (!isMuted && seSynth) seSynth.triggerAttackRelease("C5", "16n"); }
+    function playCorrectSound() { if (!isMuted && seSynth) { seSynth.triggerAttackRelease("E5", "12n", Tone.now()); seSynth.triggerAttackRelease("A5", "12n", Tone.now() + 0.1); } }
+    function playIncorrectSound() { if (!isMuted && seSynth) { seSynth.triggerAttackRelease("E3", "8n", Tone.now()); seSynth.triggerAttackRelease("C3", "8n", Tone.now() + 0.15); } }
+    function playPassSound() { if (!isMuted && seSynth) { ["C5", "E5", "G5", "C6"].forEach((n,i) => seSynth.triggerAttackRelease(n, "16n", Tone.now() + i*0.15)); } }
+    function playFailSound() { if (!isMuted && seSynth) { seSynth.triggerAttackRelease("G3", "8n", Tone.now()); seSynth.triggerAttackRelease("C3", "8n", Tone.now() + 0.2); } }
+
+    startBtn.addEventListener('click', startQuiz);
+    soundControl.addEventListener('click', toggleMute);
+
+    async function initializeAudio() {
+        if (isSoundInitialized) return;
+        try {
+            await Tone.start();
+            seSynth = new Tone.Synth().toDestination();
+            bgmSynth = new Tone.Synth({ volume: -12 }).toDestination();
+            bgm = new Tone.Sequence((t, n) => { if (bgmSynth) bgmSynth.triggerAttackRelease(n, "8n", t); }, ["C4", "E4", "G4", "C5", "E4", "G4", "A4", "G4"], "4n").start(0);
+            Tone.Transport.bpm.value = 100;
+            isSoundInitialized = true;
+        } catch (e) { isMuted = true; soundControl.style.display = 'none'; isSoundInitialized = true; }
+    }
+
+    function toggleMute() {
+        if (!isSoundInitialized && isMuted) return;
+        isMuted = !isMuted;
+        if (isSoundInitialized && Tone.Master) Tone.Master.mute = isMuted;
+        iconSoundOn.style.display = isMuted ? 'none' : 'block';
+        iconSoundOff.style.display = isMuted ? 'block' : 'none';
+        if (isSoundInitialized && Tone.Transport && !quizScreen.classList.contains('hidden')) isMuted ? Tone.Transport.pause() : Tone.Transport.start();
+    }
+
+    async function startQuiz() {
+        await initializeAudio();
+        playClickSound();
+        if (!isMuted && isSoundInitialized && Tone.Transport) Tone.Transport.start();
+        startScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        resetTimer();
+        const currentQuestion = quizData[currentQuestionIndex];
+        questionCounterEl.textContent = `Q.${currentQuestionIndex + 1} / ${quizData.length}`;
+        questionTextEl.textContent = currentQuestion.question;
+        optionsContainer.innerHTML = '';
+        const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+        shuffledOptions.forEach(option => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.textContent = option;
+            button.addEventListener('click', () => selectAnswer(button, option));
+            optionsContainer.appendChild(button);
+        });
+        startTimer();
+    }
+
+    function startTimer() {
+        let timeLeft = COUNTDOWN_SECONDS;
+        timerBar.style.width = '100%';
+        requestAnimationFrame(() => { timerBar.style.transition = `width ${COUNTDOWN_SECONDS}s linear`; timerBar.style.width = '0%'; });
+        timerInterval = setInterval(() => { timeLeft--; if (timeLeft < 0) { clearInterval(timerInterval); selectAnswer(null, null); } }, 1000);
+    }
+
+    function resetTimer() { clearInterval(timerInterval); timerBar.style.transition = 'none'; timerBar.style.width = '100%'; }
+
+    function selectAnswer(btn, opt) {
+        resetTimer();
+        userAnswers[currentQuestionIndex] = opt;
+        const isCorrect = opt === quizData[currentQuestionIndex].answer;
+        isCorrect ? playCorrectSound() : playIncorrectSound();
+        Array.from(optionsContainer.children).forEach(b => {
+            b.disabled = true;
+            if (b.textContent === quizData[currentQuestionIndex].answer) b.classList.add('correct');
+            else if (b === btn) b.classList.add('incorrect');
+        });
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) showQuestion();
+            else finishQuiz();
+        }, 1200);
+    }
+
+    async function finishQuiz() {
+        if (isSoundInitialized && Tone.Transport) Tone.Transport.stop();
+        quizScreen.innerHTML = `<div style="padding:2rem;"><h2 class="result-title">Calculating...</h2><p>Creating your certificate</p></div>`;
+        let score = 0;
+        const questionResults = [];
+        quizData.forEach((data, index) => {
+            const isCorrect = userAnswers[index] === data.answer;
+            questionResults.push(isCorrect);
+            if (isCorrect) score++;
+        });
+        const percentage = Math.round((score / quizData.length) * 100);
+        const isPass = percentage >= 80;
+        isPass ? playPassSound() : playFailSound();
+
+        fetch(GAS_WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ percentage, score, totalQuestions: quizData.length, isPass, results: questionResults }),
+        }).catch(e => console.error('GAS Error', e));
+
+        showCompletionMessage(isPass, score);
+    }
+    // END OF COPIED LOGIC
+
+    // ★★★ Certificate Generation (English) ★★★
+    function showCompletionMessage(isPass, score) {
+        const today = new Date().toLocaleDateString('en-US');
+        let html = '';
+
+        if (isPass) {
+            html = `
+                <div class="certificate-card">
+                    <div class="cert-title">Otaru Tourism<br>Manner Master</div>
+                    <div class="cert-grade">Excellent!</div>
+                    <p>You are a wonderful traveler<br>with high manner awareness.</p>
+                    <div class="cert-date">Date: ${today}</div>
+                </div>
+                <div class="incentive-text">
+                    Congratulations!<br>
+                    Show this screen for a special benefit.
+                </div>
+                <a href="https://otaru.gr.jp/" target="_blank" class="incentive-link">Get Tourist Guide</a>
+            `;
+        } else {
+            html = `
+                <h2 class="result-title fail" style="margin-top:2rem;">Almost there!</h2>
+                <p class="result-message">
+                    Score: ${score} / ${quizData.length}<br>
+                    Try again to become a Master!
+                </p>
+                <a href="quiz-en.html" class="retry-btn">Try Again</a>
+            `;
+        }
+        quizContainer.innerHTML = html;
+    }
+});
+
