@@ -5,31 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小樽観光マナークイズ</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Tone.jsライブラリを読み込みます -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
 </head>
 <body>
 
     <div class="quiz-container" id="quiz-container">
         
-        <!-- サウンドON/OFFボタン -->
+        <!-- サウンドON/OFF -->
         <div id="sound-control" class="sound-control">
-            <svg id="icon-sound-on" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-            <svg id="icon-sound-off" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+            <svg id="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <svg id="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
         </div>
         
-        <!-- クイズ開始前の画面 -->
+        <!-- 開始画面 -->
         <div id="start-screen">
-            <h1 class="quiz-title">小樽観光マナークイズ</h1>
+            <h1 class="quiz-title">小樽観光<br>マナークイズ</h1>
             <p class="quiz-description">
-                全7問のマナークイズに挑戦しよう！<br>
-                各問題の制限時間は10秒です。
+                小樽の達人になろう！<br>
+                全7問 / 各10秒<br>
+                <span style="font-size: 0.9rem; color: #888;">※合格すると限定ガイドをプレゼント</span>
             </p>
-            <button id="start-btn" class="start-btn">クイズ開始</button>
+            <button id="start-btn" class="start-btn">クイズに挑戦する</button>
         </div>
 
-        <!-- クイズ中の画面 -->
+        <!-- クイズ画面 -->
         <div id="quiz-screen" class="hidden">
             <div id="timer-bar-container">
                 <div id="timer-bar"></div>
@@ -46,3 +46,4 @@
     <script src="script-ja.js"></script>
 </body>
 </html>
+
