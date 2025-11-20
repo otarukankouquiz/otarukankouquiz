@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小樽観光マナークイズ - 言語選択</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <title>小樽観光マナークイズ / Otaru Tourism Etiquette Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -16,53 +16,93 @@
             margin: 0;
             padding: 1rem;
             box-sizing: border-box;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         .portal-container {
             background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             padding: 2.5rem;
             text-align: center;
         }
-        h1 {
-            font-size: 1.8rem;
-            color: #007bff;
-            margin-bottom: 1rem;
+        .collaboration-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
         }
-        p {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 2.5rem;
+        h1 {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        .sub-title {
+            font-size: 0.9rem;
+            color: #007bff;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+        .lang-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
         .lang-button {
-            display: block;
-            background-color: #007bff;
-            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            color: #333;
             text-decoration: none;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 50px;
+            border: 2px solid #e0e0e0;
             font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .lang-button:hover {
-            background-color: #0056b3;
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+        }
+        .flag-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
     <div class="portal-container">
-        <h1>小樽観光マナークイズへようこそ！</h1>
-        <p>Welcome to the Otaru Tourism Etiquette Quiz!</p>
-        <div>
-            <a href="quiz-ja.html" class="lang-button">日本語 (Japanese)</a>
-            <!-- 他言語版を作成した場合はここに追加 -->
-            <!-- <a href="quiz-en.html" class="lang-button">English</a> -->
+        <p class="collaboration-text">北見工業大学 × 小樽商科大学</p>
+        <h1>小樽観光<br>マナークイズ</h1>
+        <p class="sub-title">Otaru Tourism Etiquette Quiz</p>
+        
+        <div class="lang-btn-group">
+            <a href="quiz-ja.html" class="lang-button">
+                <span class="flag-icon">🇯🇵</span> 日本語で挑戦
+            </a>
+            <a href="quiz-en.html" class="lang-button">
+                <span class="flag-icon">🇺🇸</span> English
+            </a>
+            <!-- 将来的に追加 -->
+            <!-- 
+            <a href="quiz-zh.html" class="lang-button"><span class="flag-icon">🇨🇳</span> 简体中文</a>
+            <a href="quiz-ko.html" class="lang-button"><span class="flag-icon">🇰🇷</span> 한국어</a> 
+            -->
         </div>
+        
+        <p style="margin-top: 2rem; font-size: 0.8rem; color: #aaa;">
+            Select your language to start.
+        </p>
     </div>
 </body>
 </html>
+
